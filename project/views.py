@@ -162,6 +162,6 @@ def confirm_booking(request):
 def cancel_old_reservations():
     current_time = timezone.now()
     change_in_time = current_time - timedelta(minutes=15)
-    old_reservations = Reservation.objects.filter(time_started__lte=change_in_time)
+    old_reservations = Reservation.objects.filter(timeStarted__lte=change_in_time)
     for reservation in old_reservations:
         reservation.delete()
