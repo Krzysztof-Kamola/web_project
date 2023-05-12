@@ -158,9 +158,9 @@ def confirm_booking(request):
         if checkAmount == amount:
             reservation.confirmedStatus = True
             reservation.save()
-            return JsonResponse({"status": "success","sent": amount,"check": checkAmount})
+            return JsonResponse({"status": "success"})
         else:
-            return JsonResponse({"status": "fail","sent": amount,"check": checkAmount})
+            return JsonResponse({"status": "failed"})
     
     except Reservation.DoesNotExist:
         return JsonResponse({"status": "failed"})
