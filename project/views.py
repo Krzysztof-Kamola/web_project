@@ -48,7 +48,6 @@ def list_flights(request):
                                 "cityOfArrival" : flight.endLocation.airport,
                                 "dateOfDeparture" : flight.departureDate,
                                 "timeOfDeparture" : flight.departureTime,
-                                "timeOfArrival" : flight.arrivalTime,
                                 "seats": {
                                     "noOfEconomy": flight.planeID.numberOfEconomy,
                                     "noOfBusiness": flight.planeID.numberOfBusiness,
