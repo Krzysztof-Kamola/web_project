@@ -41,20 +41,20 @@ def list_flights(request):
             listOfFlights = {}
             for flight in flights:
                 flightDict = {  
-                                'cityOfDeparture' : flight.startLocation.airport,
-                                'cityOfArrival' : flight.endLocation.airport,
-                                'dateOfDeparture' : flight.departureDate,
-                                'timeOfDeparture' : flight.departureTime,
-                                'timeOfArrival' : flight.arrivalTime,
-                                'seats': {
-                                    'noOfEconomy': flight.planeID.numberOfEconomy,
-                                    'noOfBusiness': flight.planeID.numberOfBusiness,
-                                    'noOfFirstClass': flight.planeID.numberOfFirstClass,
+                                "cityOfDeparture" : flight.startLocation.airport,
+                                "cityOfArrival" : flight.endLocation.airport,
+                                "dateOfDeparture" : flight.departureDate,
+                                "timeOfDeparture" : flight.departureTime,
+                                "timeOfArrival" : flight.arrivalTime,
+                                "seats": {
+                                    "noOfEconomy": flight.planeID.numberOfEconomy,
+                                    "noOfBusiness": flight.planeID.numberOfBusiness,
+                                    "noOfFirstClass": flight.planeID.numberOfFirstClass,
                                 },
-                                'price' : {
-                                        'priceOfEconomy': flight.priceID.EconomyPrice,
-                                        'priceOfBusiness': flight.priceID.BusinessPrice,
-                                        'priceOfFirstClass': flight.priceID.FirstClassPrice
+                                "price" : {
+                                        "priceOfEconomy": flight.priceID.EconomyPrice,
+                                        "priceOfBusiness": flight.priceID.BusinessPrice,
+                                        "priceOfFirstClass": flight.priceID.FirstClassPrice
                                 }
                             }
                 
@@ -64,7 +64,7 @@ def list_flights(request):
             return JsonResponse(listOfFlights)
         
         except ObjectDoesNotExist:
-            return JsonResponse({'status': 'fail'})
+            return JsonResponse({"status": "fail"})
 
     
 
@@ -85,7 +85,7 @@ def make_reservation(request):
             passenger.save()
         flight = Flight.objects.get(pk = flightID)
         if flight.numberAvailableEconomy < economySeats or flight.numberAvailableBuisness < businessSeats or flight.numberAvailableFirtsClass < firstClassSeats:
-            return JsonResponse({'status': 'fail'})
+            return JsonResponse({"status": "fail"})
         
         reservation = Reservation(
             flightID= flight,
@@ -106,10 +106,10 @@ def make_reservation(request):
         flight.save()
 
         message ='02' + str(reservation.pk)
-        return JsonResponse({'bookingID': message})
+        return JsonResponse({"bookingID": message})
     
     except ObjectDoesNotExist:
-        return JsonResponse({'status': 'fail'})
+        return JsonResponse({"status": "fail"})
 
 def cancel_reservation(request):  
     try:
@@ -127,10 +127,10 @@ def cancel_reservation(request):
         flight.save()
 
         reservation.delete()
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({"status": "success"})
     
     except Reservation.DoesNotExist:
-        return JsonResponse({'status': 'fail'})
+        return JsonResponse({"status": "fail"})
     
 def confirm_booking(request):
     try:
@@ -147,11 +147,11 @@ def confirm_booking(request):
         if checkAmount == amount:
             reservation.confirmedStatus = True
             reservation.save()
-            return JsonResponse({'status': 'success','sent': amount,'check': checkAmount})
+            return JsonResponse({"status": "success","sent": amount,"check": checkAmount})
         else:
-            return JsonResponse({'status': 'fail','sent': amount,'check': checkAmount})
+            return JsonResponse({"status": "fail","sent": amount,"check": checkAmount})
     
     except Reservation.DoesNotExist:
-        return JsonResponse({'status': 'fail'})
+        return JsonResponse({"status": "fail"})
     
 
