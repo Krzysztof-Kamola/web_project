@@ -16,10 +16,10 @@ def list_flights(request):
     if(request.method == 'GET'):
         # {‘dateOfDeparture’, 'cityOfDeparture', ‘arrivalCity’, ‘numberOftickets' }
         data = json.loads(request.body)
-        departureDateString = data[list(data.keys())[0]] 
-        departureCity = data[list(data.keys())[1]] 
-        arrivalCity = data[list(data.keys())[2]]
-        totalNumTickets = data[list(data.keys())[3]]
+        departureDateString = data.get(['dateOfDeparture'] )
+        departureCity = data.get(['cityOfDeparture'])
+        arrivalCity = data.get(['cityOfArrival'])
+        totalNumTickets = data.get(['totalNoOfTickets'])
 
         try:
 
@@ -74,14 +74,13 @@ def make_reservation(request):
     cancel_old_reservations()
     #  {"flight ID", "seats": {econ, business, first class}, "email"}
     data = json.loads(request.body)
-    flightID = data[list(data.keys())[0]]
+    flightID = data.get(['flightID'])
     flightID = int(flightID[2:])
-
-    numberOfSeats = data[list(data.keys())[1]]
-    email = data[list(data.keys())[2]]
-    economySeats = numberOfSeats[list(numberOfSeats.keys())[0]]
-    businessSeats = numberOfSeats[list(numberOfSeats.keys())[1]]
-    firstClassSeats = numberOfSeats[list(numberOfSeats.keys())[2]]
+    numberOfSeats = data.get(['seats'])
+    email = data.get(['email'])
+    economySeats = numberOfSeats.get(['noOfEconomy'])
+    businessSeats = numberOfSeats.get(['noOfBusiness'])
+    firstClassSeats = numberOfSeats.get(['noOfFirstClass'])
 
     try:
         passenger, created = Passenger.objects.get_or_create(email = email)
@@ -120,7 +119,7 @@ def cancel_reservation(request):
     try:
         #  {"bookingID"}
         data = json.loads(request.body)
-        reservationID = data[list(data.keys())[0]]
+        reservationID = data.get(['bookingID'])
         reservationID = int(reservationID[2:])
         reservation = Reservation.objects.get(pk = reservationID)
 
@@ -143,7 +142,7 @@ def confirm_booking(request):
     try:
          #  {"bookingID", "amount"}
         data = json.loads(request.body) 
-        reservationID = data[list(data.keys())[0]]
+        reservationID = data.get(['bookingID'])
         reservationID = int(reservationID[2:])
         amount = float(data[list(data.keys())[1]])
         reservation = Reservation.objects.get(pk = reservationID)
