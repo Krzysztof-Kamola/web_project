@@ -21,7 +21,7 @@ def list_flights(request):
         departureCity = data.get('cityOfDeparture')
         arrivalCity = data.get('cityOfArrival')
         totalNumTickets = data.get('totalNoOfTickets')
-
+        listOfFlights = {}
         try:
 
             departureDate = datetime.strptime(departureDateString, '%Y-%m-%d') if departureDateString else None
@@ -39,9 +39,8 @@ def list_flights(request):
                 flights = flights.filter(departureDate__gte=departureDate)
 
             if not flights.exists():
-                return JsonResponse({"status": "failed"})
+                return JsonResponse(listOfFlights)
 
-            listOfFlights = {}
             for flight in flights:
                 flightDict = {  
                                 "cityOfDeparture" : flight.startLocation.airport,
@@ -67,7 +66,7 @@ def list_flights(request):
             return JsonResponse(listOfFlights)
         
         except ObjectDoesNotExist:
-            return JsonResponse({"status": "failed"})
+            return JsonResponse(listOfFlights)
 
 
 @csrf_exempt
