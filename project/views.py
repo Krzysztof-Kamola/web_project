@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from .models import Flight, Price, Reservation, Location, Passenger
 import json
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def home(request):
@@ -68,8 +69,8 @@ def list_flights(request):
         except ObjectDoesNotExist:
             return JsonResponse({"status": "fail"})
 
-    
 
+@csrf_exempt
 def make_reservation(request):
     cancel_old_reservations()
     #  {"flight ID", "seats": {econ, business, first class}, "email"}
@@ -114,6 +115,7 @@ def make_reservation(request):
     except ObjectDoesNotExist:
         return JsonResponse({"status": "fail"})
 
+@csrf_exempt
 def cancel_reservation(request):  
     cancel_old_reservations()
     try:
@@ -136,7 +138,8 @@ def cancel_reservation(request):
     
     except Reservation.DoesNotExist:
         return JsonResponse({"status": "fail"})
-    
+
+@csrf_exempt   
 def confirm_booking(request):
     cancel_old_reservations()
     try:
