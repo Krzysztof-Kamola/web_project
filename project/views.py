@@ -16,10 +16,10 @@ def list_flights(request):
     if(request.method == 'GET'):
         # {‘dateOfDeparture’, 'cityOfDeparture', ‘arrivalCity’, ‘numberOftickets' }
         data = json.loads(request.body)
-        departureDateString = data.get(['dateOfDeparture'] )
-        departureCity = data.get(['cityOfDeparture'])
-        arrivalCity = data.get(['cityOfArrival'])
-        totalNumTickets = data.get(['totalNoOfTickets'])
+        departureDateString = data.get('dateOfDeparture')
+        departureCity = data.get('cityOfDeparture')
+        arrivalCity = data.get('cityOfArrival')
+        totalNumTickets = data.get('totalNoOfTickets')
 
         try:
 
@@ -74,13 +74,13 @@ def make_reservation(request):
     cancel_old_reservations()
     #  {"flight ID", "seats": {econ, business, first class}, "email"}
     data = json.loads(request.body)
-    flightID = data.get(['flightID'])
+    flightID = data.get('flightID')
     flightID = int(flightID[2:])
-    numberOfSeats = data.get(['seats'])
-    email = data.get(['email'])
-    economySeats = numberOfSeats.get(['noOfEconomy'])
-    businessSeats = numberOfSeats.get(['noOfBusiness'])
-    firstClassSeats = numberOfSeats.get(['noOfFirstClass'])
+    numberOfSeats = data.get('seats')
+    email = data.get('email')
+    economySeats = numberOfSeats.get('noOfEconomy')
+    businessSeats = numberOfSeats.get('noOfBusiness')
+    firstClassSeats = numberOfSeats.get('noOfFirstClass')
 
     try:
         passenger, created = Passenger.objects.get_or_create(email = email)
@@ -119,7 +119,7 @@ def cancel_reservation(request):
     try:
         #  {"bookingID"}
         data = json.loads(request.body)
-        reservationID = data.get(['bookingID'])
+        reservationID = data.get('bookingID')
         reservationID = int(reservationID[2:])
         reservation = Reservation.objects.get(pk = reservationID)
 
@@ -142,9 +142,9 @@ def confirm_booking(request):
     try:
          #  {"bookingID", "amount"}
         data = json.loads(request.body) 
-        reservationID = data.get(['bookingID'])
+        reservationID = data.get('bookingID')
         reservationID = int(reservationID[2:])
-        amount = float(data[list(data.keys())[1]])
+        amount = float(data.get('amount'))
         reservation = Reservation.objects.get(pk = reservationID)
         flight = reservation.flightID
         prices = flight.priceID
