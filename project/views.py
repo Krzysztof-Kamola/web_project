@@ -76,7 +76,7 @@ def make_reservation(request):
     #  {"flight ID", "seats": {econ, business, first class}, "email"}
     data = json.loads(request.body)
     flightID = data.get('flightID')
-    flightID = int(flightID[2:])
+    flightID = flightID[2:]
     numberOfSeats = data.get('seats')
     email = data.get('email')
     economySeats = numberOfSeats.get('noOfEconomy')
@@ -117,14 +117,14 @@ def make_reservation(request):
 
 @csrf_exempt
 def cancel_reservation(request):  
-    cancel_old_reservations()
     try:
         #  {"bookingID"}
+        cancel_old_reservations()
         data = json.loads(request.body)
         reservationID = data.get('bookingID')
-        reservationID = int(reservationID[2:])
+        reservationID = reservationID[2:]
         reservation = Reservation.objects.get(pk = reservationID)
-
+        
         flight = reservation.flightID
         flight.totalAvailable += (reservation.numberOfEconomy + reservation.numberOfBusiness + reservation.numberOfFirstClass)
         flight.numberAvailableEconomy += reservation.numberOfEconomy
@@ -136,7 +136,7 @@ def cancel_reservation(request):
         reservation.delete()
         return JsonResponse({"status": "success"})
     
-    except Reservation.DoesNotExist:
+    except:
         return JsonResponse({"status": "fail"})
 
 @csrf_exempt   
@@ -169,8 +169,7 @@ def confirm_booking(request):
 def cancel_old_reservations():
     current_time = timezone.now()
     change_in_time = current_time - timedelta(minutes=15)
-    old_reservations = Reservation.objects.filter(timeStarted__lte = change_in_time)
-    old_reservations = Reservation.objects.filter(confirmedStatus = False)
+    old_reservations = Reservation.objects.filter(timeStarted__lte = change_in_time,confirmedStatus = False)
     for reservation in old_reservations:
         flight = reservation.flightID
         flight.totalAvailable += (reservation.numberOfEconomy + reservation.numberOfBusiness + reservation.numberOfFirstClass)
