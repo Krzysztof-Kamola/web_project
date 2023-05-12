@@ -143,7 +143,7 @@ def cancel_reservation(request):
 def confirm_booking(request):
     cancel_old_reservations()
     try:
-         #  {"bookingID", "amount"}
+        #  {"bookingID", "amount"}
         data = json.loads(request.body) 
         reservationID = data.get('bookingID')
         reservationID = int(reservationID[2:])
@@ -153,7 +153,8 @@ def confirm_booking(request):
         prices = flight.priceID
         checkAmount = 0.0
         checkAmount = float((reservation.numberOfEconomy * prices.EconomyPrice) + (reservation.numberOfBusiness * prices.BusinessPrice) + (reservation.numberOfFirstClass * prices.FirstClassPrice))
-        print(checkAmount == amount)
+        print(checkAmount)
+        print(amount)
         if checkAmount == amount:
             reservation.confirmedStatus = True
             reservation.save()
