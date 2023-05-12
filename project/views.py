@@ -165,4 +165,12 @@ def cancel_old_reservations():
     old_reservations = Reservation.objects.filter(timeStarted__lte = change_in_time)
     old_reservations = Reservation.objects.filter(confirmedStatus = False)
     for reservation in old_reservations:
+        flight = reservation.flightID
+        flight.totalAvailable += (reservation.numberOfEconomy + reservation.numberOfBusiness + reservation.numberOfFirstClass)
+        flight.numberAvailableEconomy += reservation.numberOfEconomy
+        flight.numberAvailableBuisness += reservation.numberOfBusiness
+        flight.numberAvailableFirtsClass += reservation.numberOfFirstClass
+        flight.numberPassengers -= (reservation.numberOfEconomy + reservation.numberOfBusiness + reservation.numberOfFirstClass) 
+        flight.save()
+
         reservation.delete()
