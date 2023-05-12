@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import Flight, Price, Reservation, Location, Passenger
 import json
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,6 +12,7 @@ def home(request):
     return HttpResponse("<h1> Homepage </h1>")
 
 def list_flights(request):
+    cancel_old_reservations()
     if(request.method == 'GET'):
         data = json.loads(request.body) # {‘dateOfDeparture’, 'cityOfDeparture', ‘arrivalCity’, ‘numberOftickets' }
         departureDateString = data[list(data.keys())[0]] 
@@ -69,6 +70,7 @@ def list_flights(request):
     
 
 def make_reservation(request):
+    cancel_old_reservations()
     data = json.loads(request.body) #  {‘flight ID’, 'seats: {econ, business, first class}, 'email'}
     flightID = data[list(data.keys())[0]]
     flightID = int(flightID[2:])
@@ -112,6 +114,7 @@ def make_reservation(request):
         return JsonResponse({"status": "fail"})
 
 def cancel_reservation(request):  
+    cancel_old_reservations()
     try:
         data = json.loads(request.body)  #  {'bookingID'}
         reservationID = data[list(data.keys())[0]]
@@ -133,6 +136,7 @@ def cancel_reservation(request):
         return JsonResponse({"status": "fail"})
     
 def confirm_booking(request):
+    cancel_old_reservations()
     try:
         data = json.loads(request.body)  #  {'bookingID', 'amount'}
         reservationID = data[list(data.keys())[0]]
@@ -155,3 +159,9 @@ def confirm_booking(request):
         return JsonResponse({"status": "fail"})
     
 
+def cancel_old_reservations():
+    current_time = timezone.now()
+    change_in_time = current_time - timedelta(minutes=15)
+    old_reservations = Reservation.objects.filter(time_started__lte=change_in_time)
+    for reservation in old_reservations:
+        reservation.delete()
