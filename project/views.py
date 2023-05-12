@@ -14,7 +14,8 @@ def home(request):
 def list_flights(request):
     cancel_old_reservations()
     if(request.method == 'GET'):
-        data = json.loads(request.body) # {‘dateOfDeparture’, 'cityOfDeparture', ‘arrivalCity’, ‘numberOftickets' }
+        # {‘dateOfDeparture’, 'cityOfDeparture', ‘arrivalCity’, ‘numberOftickets' }
+        data = json.loads(request.body)
         departureDateString = data[list(data.keys())[0]] 
         departureCity = data[list(data.keys())[1]] 
         arrivalCity = data[list(data.keys())[2]]
@@ -37,7 +38,7 @@ def list_flights(request):
                 flights = flights.filter(departureDate__gte=departureDate)
 
             if not flights.exists():
-                return JsonResponse({"message": "No flights found"},safe=False)
+                return JsonResponse({"status": "fail"})
 
             listOfFlights = {}
             for flight in flights:
@@ -71,7 +72,8 @@ def list_flights(request):
 
 def make_reservation(request):
     cancel_old_reservations()
-    data = json.loads(request.body) #  {‘flight ID’, 'seats: {econ, business, first class}, 'email'}
+    #  {"flight ID", "seats": {econ, business, first class}, "email"}
+    data = json.loads(request.body)
     flightID = data[list(data.keys())[0]]
     flightID = int(flightID[2:])
 
@@ -116,7 +118,8 @@ def make_reservation(request):
 def cancel_reservation(request):  
     cancel_old_reservations()
     try:
-        data = json.loads(request.body)  #  {'bookingID'}
+        #  {"bookingID"}
+        data = json.loads(request.body)
         reservationID = data[list(data.keys())[0]]
         reservationID = int(reservationID[2:])
         reservation = Reservation.objects.get(pk = reservationID)
@@ -138,7 +141,8 @@ def cancel_reservation(request):
 def confirm_booking(request):
     cancel_old_reservations()
     try:
-        data = json.loads(request.body)  #  {'bookingID', 'amount'}
+         #  {"bookingID", "amount"}
+        data = json.loads(request.body) 
         reservationID = data[list(data.keys())[0]]
         reservationID = int(reservationID[2:])
         amount = float(data[list(data.keys())[1]])
