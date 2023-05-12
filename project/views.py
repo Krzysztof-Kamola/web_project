@@ -36,7 +36,7 @@ def list_flights(request):
             if totalNumTickets:
                 flights = flights.filter(totalAvailable__gte=totalNumTickets)
             if departureDate:
-                flights = flights.filter(departureDate__gte=departureDate)
+                flights = flights.filter(departureDate=departureDate)
 
             if not flights.exists():
                 return JsonResponse(listOfFlights)
