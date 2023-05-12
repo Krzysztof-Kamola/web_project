@@ -39,7 +39,7 @@ def list_flights(request):
                 flights = flights.filter(departureDate__gte=departureDate)
 
             if not flights.exists():
-                return JsonResponse({"status": "fail"})
+                return JsonResponse({"status": "failed"})
 
             listOfFlights = {}
             for flight in flights:
@@ -67,7 +67,7 @@ def list_flights(request):
             return JsonResponse(listOfFlights)
         
         except ObjectDoesNotExist:
-            return JsonResponse({"status": "fail"})
+            return JsonResponse({"status": "failed"})
 
 
 @csrf_exempt
@@ -89,7 +89,7 @@ def make_reservation(request):
             passenger.save()
         flight = Flight.objects.get(pk = flightID)
         if flight.numberAvailableEconomy < economySeats or flight.numberAvailableBuisness < businessSeats or flight.numberAvailableFirtsClass < firstClassSeats:
-            return JsonResponse({"status": "fail"})
+            return JsonResponse({"status": "failed"})
         
         reservation = Reservation(
             flightID= flight,
@@ -113,7 +113,7 @@ def make_reservation(request):
         return JsonResponse({"bookingID": message})
     
     except ObjectDoesNotExist:
-        return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "failed"})
 
 @csrf_exempt
 def cancel_reservation(request):  
@@ -137,7 +137,7 @@ def cancel_reservation(request):
         return JsonResponse({"status": "success"})
     
     except:
-        return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "failed"})
 
 @csrf_exempt   
 def confirm_booking(request):
@@ -163,7 +163,7 @@ def confirm_booking(request):
             return JsonResponse({"status": "fail","sent": amount,"check": checkAmount})
     
     except Reservation.DoesNotExist:
-        return JsonResponse({"status": "fail"})
+        return JsonResponse({"status": "failed"})
     
 
 def cancel_old_reservations():
